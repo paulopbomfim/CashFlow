@@ -8,20 +8,23 @@ public class RegisterExpenseUseCase
 {
     public RegisterExpenseResponse Execute(RegisterExpenseRequest request)
     {
-        throw new NotImplementedException();
+        Validate(request);
+
+        return new RegisterExpenseResponse()
+        {
+            Title = request.Title
+        };
     }
 
-    public void Validate(RegisterExpenseRequest request)
+    private void Validate(RegisterExpenseRequest request)
     {
         var validator = new RegisterExpenseValidator();
 
         var result = validator.Validate(request);
 
+        if (result.IsValid) return;
 
-        if (!result.IsValid)
-        {
-            var errorMessages = result.Errors.Select(f => f.ErrorMessage).ToList();
-            throw new ErrorOnValidationException(errorMessages);
-        }
+        var errorMessages = result.Errors.Select(f => f.ErrorMessage).ToList();
+        throw new ErrorOnValidationException(errorMessages);
     }
 }
