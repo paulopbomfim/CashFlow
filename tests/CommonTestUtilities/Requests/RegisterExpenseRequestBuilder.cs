@@ -13,6 +13,6 @@ public class RegisterExpenseRequestBuilder
             .RuleFor(r => r.Description, faker => faker.Commerce.ProductDescription())
             .RuleFor(r => r.Date, faker => faker.Date.Past())
             .RuleFor(r => r.PaymentType, faker => faker.PickRandom<PaymentType>())
-            .RuleFor(r => r.Amount, faker => faker.Random.Double(min: 1));
+            .RuleFor(r => r.Amount, faker => faker.Random.Decimal(min: 1));
     }
 }

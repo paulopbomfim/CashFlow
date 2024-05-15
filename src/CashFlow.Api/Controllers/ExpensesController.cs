@@ -10,11 +10,36 @@ namespace CashFlow.Api.Controllers;
 public class ExpensesController : ControllerBase
 {
     [HttpPost]
-    [ProducesResponseType(typeof(RegisterExpenseResponse), StatusCodes.Status201Created)]
-    public IActionResult Register([FromBody] RegisterExpenseRequest request)
+    [ProducesResponseType(typeof(RegisterExpensesResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register([FromServices] IRegisterExpenseUseCase useCase, [FromBody] RegisterExpenseRequest request)
     {
-        var response = new RegisterExpenseUseCase().Execute(request);
+        var response = await useCase.Execute(request);
 
         return Created(string.Empty, response);
     }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(ExpensesResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetAll([FromServices] IGetAllExpenseUseCase useCase)
+    {
+        var response = await useCase.Execute();
+        
+        if (response.Expenses.Any())
+            return Ok(response);
+
+        return NoContent();
+    }
+    
+    [HttpGet("{id:long}")]
+    [ProducesResponseType(typeof(ExpenseResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAll([FromServices] IGetByIdExpenseUseCase useCase, [FromRoute] long id)
+    {
+        var response = await useCase.Execute(id);
+        
+        return Ok(response);
+    }
+    
 }

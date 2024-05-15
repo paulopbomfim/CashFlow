@@ -12,6 +12,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorMessagesResource.resx</DependentUpon>
     </Compile>
+    <Compile Remove="Resources1.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,11 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorMessagesResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Remove="Resources1.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="CashFlow.Exception.csproj.DotSettings" />
   </ItemGroup>
 
 </Project>

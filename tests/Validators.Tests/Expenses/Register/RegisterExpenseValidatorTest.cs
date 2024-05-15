@@ -81,7 +81,7 @@ public class RegisterExpenseValidatorTest
     [InlineData(-1)]
     [InlineData(-2)]
     [InlineData(-7)]
-    public void Error_Amount_Invalid(double amount)
+    public void Error_Amount_Invalid(decimal amount)
     {
         //Arrange
         var validator = new RegisterExpenseValidator();
