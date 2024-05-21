@@ -1,36 +1,35 @@
-﻿using AutoMapper;
+using AutoMapper;
 using CashFlow.Communication.Requests;
-using CashFlow.Communication.Responses;
-using CashFlow.Domain.Entities;
 using CashFlow.Domain.Repositories;
 using CashFlow.Exception;
 
 namespace CashFlow.Application.UseCases.Expenses;
 
-public class RegisterExpenseUseCase : IRegisterExpenseUseCase
+public class UpdateExpenseUseCase : IUpdateExpenseUseCase
 {
-    private readonly IExpensesWriteOnlyRepository _repository;
-    private readonly IUnitOfWork _uow;
+    private readonly IExpensesUpdateOnlyRepository _repository;
     private readonly IMapper _mapper;
+    private readonly IUnitOfWork _uow;
     
-    public RegisterExpenseUseCase(IExpensesWriteOnlyRepository repository, IUnitOfWork uow, IMapper mapper)
+    public UpdateExpenseUseCase(IExpensesUpdateOnlyRepository repository, IMapper mapper, IUnitOfWork uow)
     {
         _repository = repository;
-        _uow = uow;
         _mapper = mapper;
+        _uow = uow;
     }
-    
-    public async Task<RegisterExpensesResponse> Execute(ExpenseRequest request)
+    public async Task Execute(long id, ExpenseRequest request)
     {
         Validate(request);
-
-        var entity = _mapper.Map<Expense>(request);
         
-        await _repository.Add(entity);
+        var expense = await _repository.GetById(id);
 
+        if (expense is null)
+            throw new NotFoundException(ErrorMessagesResource.EXPENSE_NOT_FOUND);
+
+        _mapper.Map(request, expense);
+        
+        _repository.Update(expense);
         await _uow.Commit();
-        
-        return _mapper.Map<RegisterExpensesResponse>(entity);
     }
 
     private void Validate(ExpenseRequest request)

@@ -12,7 +12,7 @@ public class ExpensesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(RegisterExpensesResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Register([FromServices] IRegisterExpenseUseCase useCase, [FromBody] RegisterExpenseRequest request)
+    public async Task<IActionResult> Register([FromServices] IRegisterExpenseUseCase useCase, [FromBody] ExpenseRequest request)
     {
         var response = await useCase.Execute(request);
 
@@ -41,5 +41,27 @@ public class ExpensesController : ControllerBase
         
         return Ok(response);
     }
-    
+
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete([FromServices] IDeleteExpenseUseCase useCase, [FromRoute] long id)
+    {
+        await useCase.Execute(id);
+
+        return NoContent();
+    }
+
+    [HttpPut("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(
+        [FromServices] IUpdateExpenseUseCase useCase,
+        [FromRoute] long id,
+        [FromBody] ExpenseRequest request)
+    {
+        await useCase.Execute(id, request);
+        return NoContent();
+    }
 }

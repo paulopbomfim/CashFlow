@@ -6,5 +6,5 @@ namespace CashFlow.Application.UseCases.Expenses;
 public interface IRegisterExpenseUseCase
 {
 
-    Task<RegisterExpensesResponse> Execute(RegisterExpenseRequest request);
+    Task<RegisterExpensesResponse> Execute(ExpenseRequest request);
 }

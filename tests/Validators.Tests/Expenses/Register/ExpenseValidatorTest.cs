@@ -6,13 +6,13 @@ using FluentAssertions;
 
 namespace Validators.Tests.Expenses.Register;
 
-public class RegisterExpenseValidatorTest
+public class ExpenseValidatorTest
 {
     [Fact]
     public void Success()
     {
         //Arrange
-        var validator = new RegisterExpenseValidator();
+        var validator = new ExpenseValidator();
         var request = RegisterExpenseRequestBuilder.Build();
         
         //Act
@@ -29,7 +29,7 @@ public class RegisterExpenseValidatorTest
     public void Error_Title_Empty(string title)
     {
         //Arrange
-        var validator = new RegisterExpenseValidator();
+        var validator = new ExpenseValidator();
         var request = RegisterExpenseRequestBuilder.Build();
         request.Title = title;
         
@@ -46,7 +46,7 @@ public class RegisterExpenseValidatorTest
     public void Error_Date_Future()
     {
         //Arrange
-        var validator = new RegisterExpenseValidator();
+        var validator = new ExpenseValidator();
         var request = RegisterExpenseRequestBuilder.Build();
         request.Date = DateTime.UtcNow.AddDays(1);
         
@@ -63,7 +63,7 @@ public class RegisterExpenseValidatorTest
     public void Error_Payment_Type_Invalid()
     {
         //Arrange
-        var validator = new RegisterExpenseValidator();
+        var validator = new ExpenseValidator();
         var request = RegisterExpenseRequestBuilder.Build();
         request.PaymentType = (PaymentType)700;
         
@@ -84,7 +84,7 @@ public class RegisterExpenseValidatorTest
     public void Error_Amount_Invalid(decimal amount)
     {
         //Arrange
-        var validator = new RegisterExpenseValidator();
+        var validator = new ExpenseValidator();
         var request = RegisterExpenseRequestBuilder.Build();
         request.Amount = amount;
         
