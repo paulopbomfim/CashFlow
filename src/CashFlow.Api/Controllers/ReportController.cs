@@ -15,7 +15,7 @@ public class ReportController : ControllerBase
         [FromServices] IGenerateExpensesReportExcelUseCase useCase,
         [FromHeader] DateOnly date)
     {
-        byte[] file = await useCase.Execute(date);
+        var file = await useCase.Execute(date);
 
         if (file.Length > 0)
             return File(file, MediaTypeNames.Application.Octet, "report.xlsx");
