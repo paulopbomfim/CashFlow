@@ -22,5 +22,20 @@ public class ReportController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpGet("pdf")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Pdf(
+        [FromServices] IGenerateExpensesReportPdfUseCase useCase,
+        [FromHeader] DateOnly date)
+    {
+        var file = await useCase.Execute(date);
+
+        if (file.Length > 0)
+            return File(file, MediaTypeNames.Application.Pdf, "report.pdf");
+
+        return NoContent();
+    }
 }
 
