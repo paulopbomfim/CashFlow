@@ -4,10 +4,13 @@ namespace CashFlow.Domain.Entities;
 
 public class Expense
 {
-    public long Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public decimal Amount { get; set; }
-    public DateTime Date { get; set; }
-    public PaymentType PaymentType { get; set; }
+    public long Id { get; init; }
+    public string Title { get; init; } = string.Empty;
+    public string? Description { get; init; }
+    public decimal Amount { get; init; }
+    public DateTime Date { get; init; }
+    public PaymentType PaymentType { get; init; }
+
+    public long UserId { get; init; }
+    public User User { get; init; } = default!;
 }
