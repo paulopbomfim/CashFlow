@@ -22,10 +22,17 @@ public static class DependencyInjectionExtension
     private static void AddRepositories(IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IExpensesReadOnlyRepository, ExpensesRepository>();
-        services.AddScoped<IExpensesWriteOnlyRepository, ExpensesRepository>();
-        services.AddScoped<IExpensesUpdateOnlyRepository, ExpensesRepository>();
-        services.AddScoped<IUserReadOnlyRepository, UsersRepository>();
+
+        #region Expenses
+            services.AddScoped<IExpensesReadOnlyRepository, ExpensesRepository>();
+            services.AddScoped<IExpensesWriteOnlyRepository, ExpensesRepository>();
+            services.AddScoped<IExpensesUpdateOnlyRepository, ExpensesRepository>();
+        #endregion
+
+        #region Users
+            services.AddScoped<IUserReadOnlyRepository, UsersRepository>();
+            services.AddScoped<IUserWriteOnlyRepository, UsersRepository>();
+        #endregion
     }
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
     {
