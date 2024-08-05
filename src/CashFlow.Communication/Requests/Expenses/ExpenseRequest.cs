@@ -2,7 +2,7 @@
 
 namespace CashFlow.Communication.Requests;
 
-public class ExpenseRequest
+public record ExpenseRequest
 {
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }

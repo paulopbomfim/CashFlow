@@ -1,5 +1,6 @@
 using CashFlow.Application.AutoMapper;
 using CashFlow.Application.UseCases.Expenses;
+using CashFlow.Application.UseCases.Login;
 using CashFlow.Application.UseCases.Users;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -32,6 +33,10 @@ public static class DependencyInjectionExtension
 
         #region Users use cases
             services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
+        #endregion
+
+        #region Login use cases
+            services.AddScoped<IDoLoginUseCase, DoLoginUseCase>();
         #endregion
     }
 }
