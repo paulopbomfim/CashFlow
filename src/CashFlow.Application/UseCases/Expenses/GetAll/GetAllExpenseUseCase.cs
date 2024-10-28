@@ -1,23 +1,22 @@
 using AutoMapper;
 using CashFlow.Communication.Responses;
 using CashFlow.Domain.Repositories;
+using CashFlow.Domain.Services.LoggedUser;
 
 namespace CashFlow.Application.UseCases.Expenses;
 
-public class GetAllExpenseUseCase : IGetAllExpenseUseCase
+public class GetAllExpenseUseCase(IExpensesReadOnlyRepository repository, IMapper mapper, ILoggedUser loggedUser)
+    : IGetAllExpenseUseCase
 {
-    private readonly IExpensesReadOnlyRepository _repository;
-    private readonly IMapper _mapper;
+    private readonly IExpensesReadOnlyRepository _repository = repository;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILoggedUser _loggedUser = loggedUser;
 
-    public GetAllExpenseUseCase(IExpensesReadOnlyRepository repository, IMapper mapper)
-    {
-        _repository = repository;
-        _mapper = mapper;
-    }
-    
     public async Task<ExpensesResponse> Execute()
     {
-        var result = await _repository.GetAll();
+        var loggedUser = await _loggedUser.Get();        
+        
+        var result = await _repository.GetAll(loggedUser);
 
         return new ExpensesResponse()
         {

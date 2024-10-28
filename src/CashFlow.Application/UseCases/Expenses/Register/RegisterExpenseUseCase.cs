@@ -3,34 +3,37 @@ using CashFlow.Communication.Requests;
 using CashFlow.Communication.Responses;
 using CashFlow.Domain.Entities;
 using CashFlow.Domain.Repositories;
+using CashFlow.Domain.Services.LoggedUser;
 using CashFlow.Exception;
 
 namespace CashFlow.Application.UseCases.Expenses;
 
-public class RegisterExpenseUseCase : IRegisterExpenseUseCase
+public class RegisterExpenseUseCase(
+    IExpensesWriteOnlyRepository repository,
+    IUnitOfWork uow,
+    IMapper mapper,
+    ILoggedUser loggedUser)
+    : IRegisterExpenseUseCase
 {
-    private readonly IExpensesWriteOnlyRepository _repository;
-    private readonly IUnitOfWork _uow;
-    private readonly IMapper _mapper;
-    
-    public RegisterExpenseUseCase(IExpensesWriteOnlyRepository repository, IUnitOfWork uow, IMapper mapper)
-    {
-        _repository = repository;
-        _uow = uow;
-        _mapper = mapper;
-    }
-    
+    private readonly IExpensesWriteOnlyRepository _repository = repository;
+    private readonly IUnitOfWork _uow = uow;
+    private readonly IMapper _mapper = mapper;
+    private readonly ILoggedUser _loggedUser = loggedUser;
+
     public async Task<RegisterExpensesResponse> Execute(ExpenseRequest request)
     {
         Validate(request);
 
-        var entity = _mapper.Map<Expense>(request);
+        var loggedUser = await _loggedUser.Get();
+
+        var expense = _mapper.Map<Expense>(request);
+        expense.UserId = loggedUser.Id;
         
-        await _repository.Add(entity);
+        await _repository.Add(expense);
 
         await _uow.Commit();
         
-        return _mapper.Map<RegisterExpensesResponse>(entity);
+        return _mapper.Map<RegisterExpensesResponse>(expense);
     }
 
     private void Validate(ExpenseRequest request)

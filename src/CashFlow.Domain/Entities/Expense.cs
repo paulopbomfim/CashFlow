@@ -11,6 +11,6 @@ public class Expense
     public DateTime Date { get; init; }
     public PaymentType PaymentType { get; init; }
 
-    public long UserId { get; init; }
+    public long UserId { get; set; }
     public User User { get; init; } = default!;
 }

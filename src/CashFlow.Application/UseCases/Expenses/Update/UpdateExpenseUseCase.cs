@@ -1,27 +1,30 @@
 using AutoMapper;
 using CashFlow.Communication.Requests;
 using CashFlow.Domain.Repositories;
+using CashFlow.Domain.Services.LoggedUser;
 using CashFlow.Exception;
 
 namespace CashFlow.Application.UseCases.Expenses;
 
-public class UpdateExpenseUseCase : IUpdateExpenseUseCase
+public class UpdateExpenseUseCase(
+    IExpensesUpdateOnlyRepository repository,
+    IMapper mapper,
+    IUnitOfWork uow,
+    ILoggedUser loggedUser)
+    : IUpdateExpenseUseCase
 {
-    private readonly IExpensesUpdateOnlyRepository _repository;
-    private readonly IMapper _mapper;
-    private readonly IUnitOfWork _uow;
-    
-    public UpdateExpenseUseCase(IExpensesUpdateOnlyRepository repository, IMapper mapper, IUnitOfWork uow)
-    {
-        _repository = repository;
-        _mapper = mapper;
-        _uow = uow;
-    }
+    private readonly IExpensesUpdateOnlyRepository _repository = repository;
+    private readonly IMapper _mapper = mapper;
+    private readonly IUnitOfWork _uow = uow;
+    private readonly ILoggedUser _loggedUser = loggedUser;
+
     public async Task Execute(long id, ExpenseRequest request)
     {
         Validate(request);
         
-        var expense = await _repository.GetById(id);
+        var loggedUser = await _loggedUser.Get();
+        
+        var expense = await _repository.GetById(loggedUser, id);
 
         if (expense is null)
             throw new NotFoundException(ErrorMessagesResource.EXPENSE_NOT_FOUND);

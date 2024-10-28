@@ -2,29 +2,29 @@ using CashFlow.Domain.Enums;
 using CashFlow.Domain.Extensions;
 using CashFlow.Domain.Reports;
 using CashFlow.Domain.Repositories;
+using CashFlow.Domain.Services.LoggedUser;
 using ClosedXML.Excel;
 
 namespace CashFlow.Application.UseCases.Expenses;
 
-public class GenerateExpensesReportExcelUseCase : IGenerateExpensesReportExcelUseCase
+public class GenerateExpensesReportExcelUseCase(IExpensesReadOnlyRepository repository, ILoggedUser loggedUser)
+    : IGenerateExpensesReportExcelUseCase
 {
     private const string CURRENCY_SYMBOL = "R$";
-    private readonly IExpensesReadOnlyRepository _repository;
+    private readonly IExpensesReadOnlyRepository _repository = repository;
+    private readonly ILoggedUser _loggedUser = loggedUser;
 
-    public GenerateExpensesReportExcelUseCase(IExpensesReadOnlyRepository repository)
-    {
-        _repository = repository;
-    }
-    
     public async Task<byte[]> Execute(DateOnly date)
     {
-        var expenses = await _repository.FilterByMonth(date);
+        var loggedUser = await _loggedUser.Get();
+        
+        var expenses = await _repository.FilterByMonth(loggedUser, date);
         if (expenses.Count == 0)
             return [];
         
         using var workbook = new XLWorkbook();
 
-        workbook.Author = "Paulo Bomfim";
+        workbook.Author = loggedUser.Name;
         workbook.Style.Font.FontSize = 12;
         workbook.Style.Font.FontName = "Calibri";
 
